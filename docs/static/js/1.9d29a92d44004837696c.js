@@ -1,0 +1,2 @@
+webpackJsonp([1],{FQwc:function(t,e,n){"use strict";Object.defineProperty(e,"__esModule",{value:!0});var r={name:"error",data:function(){return{img:n("nMVE")}}},i={render:function(){var t=this.$createElement,e=this._self._c||t;return e("div",[e("img",{attrs:{src:this.img}}),this._v(" "),e("p",[this._v("未到找指定页面")])])},staticRenderFns:[]};var a=n("VU/8")(r,i,!1,function(t){n("H4Ha")},"data-v-01e6fc6a",null);e.default=a.exports},H4Ha:function(t,e){},nMVE:function(t,e,n){t.exports=n.p+"static/img/404.2ff881a.jpg"}});
+//# sourceMappingURL=1.9d29a92d44004837696c.js.map
