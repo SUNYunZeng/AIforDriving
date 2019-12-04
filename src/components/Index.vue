@@ -4,7 +4,7 @@
     <aside :class="asideClassName">
       <!-- logo -->
       <div class="logo-c pointer" @click="isShrinkAside" title="收缩/展开">
-        <img src="../assets/imgs/logo.jpg" alt="logo" class="logo">
+        <img src="../assets/imgs/logo.png" alt="logo" class="logo">
         <span v-show="isShowAsideTitle">驾驶分析系统</span>
       </div>
       <!-- 菜单栏 -->
