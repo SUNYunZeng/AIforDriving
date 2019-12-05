@@ -1,2 +1,0 @@
-webpackJsonp([6],{"9cz9":function(t,e){},ZALZ:function(t,e,n){"use strict";Object.defineProperty(e,"__esModule",{value:!0});var r={render:function(){this.$createElement;this._self._c;return this._m(0)},staticRenderFns:[function(){var t=this.$createElement,e=this._self._c||t;return e("div",[this._v("\n    查看消息\n    "),e("input",{attrs:{type:"text"}})])}]};var a=n("VU/8")({name:"trajectory"},r,!1,function(t){n("9cz9")},"data-v-09a08eda",null);e.default=a.exports}});
-//# sourceMappingURL=6.b7e83e8b0302f0e20cd9.js.map

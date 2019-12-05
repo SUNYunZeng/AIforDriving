@@ -76,12 +76,22 @@ const store = new Vuex.Store({
       'box_d': 'mapbox.dark',
       'box_l': 'mapbox.light',
       'box': 'mapbox.streets'
+    },
+    //地图配置
+    mapconfig: {
+      zoom: 15,
+      center: [30.541093, 114.360734],
+      minZoom: 2,
+      maxZoom: 18
     }
   },
   mutations: {
     setMenus (state, items) {
       state.menuItems = [...items];
     },
+    setMap(state, key, value) {
+      state.mapconfig[key] = value;
+    }
   }
 });
 

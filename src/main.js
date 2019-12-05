@@ -11,6 +11,7 @@ import 'iview/dist/styles/iview.css'
 import '@/permission';
 import * as L from 'leaflet';
 import * as Provider from 'leaflet.chinatmsproviders';
+require('echarts/extension/bmap/bmap');
 
 // 全局注册
 Vue.config.productionTip = false;
