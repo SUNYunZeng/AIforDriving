@@ -21,10 +21,13 @@ Vue.L = Vue.prototype.$L = L;
 Vue.Provider = Vue.prototype.$Provider = Provider;
 
 // 服务器网站，服务器需允许跨域访问
-Vue.prototype.bUrl = 'http://localhost:3000/api/';
+Vue.prototype.bUrl = store.state.bUrl;
 
 // 设置请求超时时间
 axios.defaults.timeout = 5000;
+
+// 是否是部署环境
+Vue.prototype.$isOnServer = false;
 
 /* eslint-disable no-new */
 new Vue({

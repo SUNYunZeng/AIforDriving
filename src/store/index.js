@@ -5,6 +5,14 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
+    // 服务器地址
+    bUrl: 'http://localhost:3000/api/',
+    magicNum: {
+      'user1': [114.250663, 0.086436, 22.744553, 0.051849],
+      'user2': [114.05941, 0.069559, 22.633552, 0.056518],
+      'user3' :[114.374747, 0.099517, 22.758982, 0.055779],
+      'user4' :[113.888713, 0.140422, 22.625372, 0.288917]
+    },
     // 左侧菜单栏数据
     menuItems: [
       {
@@ -83,6 +91,130 @@ const store = new Vuex.Store({
       center: [30.541093, 114.360734],
       minZoom: 2,
       maxZoom: 18
+    },
+    //百度地图样式
+    mapStyle: {
+      'styleJson': [
+        {
+          'featureType': 'water',
+          'elementType': 'all',
+          'stylers': {
+            'color': '#031628'
+          }
+        },
+        {
+          'featureType': 'land',
+          'elementType': 'geometry',
+          'stylers': {
+            'color': '#000102'
+          }
+        },
+        {
+          'featureType': 'highway',
+          'elementType': 'all',
+          'stylers': {
+            'visibility': 'off'
+          }
+        },
+        {
+          'featureType': 'arterial',
+          'elementType': 'geometry.fill',
+          'stylers': {
+            'color': '#000000'
+          }
+        },
+        {
+          'featureType': 'arterial',
+          'elementType': 'geometry.stroke',
+          'stylers': {
+            'color': '#0b3d51'
+          }
+        },
+        {
+          'featureType': 'local',
+          'elementType': 'geometry',
+          'stylers': {
+            'color': '#000000'
+          }
+        },
+        {
+          'featureType': 'railway',
+          'elementType': 'geometry.fill',
+          'stylers': {
+            'color': '#000000'
+          }
+        },
+        {
+          'featureType': 'railway',
+          'elementType': 'geometry.stroke',
+          'stylers': {
+            'color': '#08304b'
+          }
+        },
+        {
+          'featureType': 'subway',
+          'elementType': 'geometry',
+          'stylers': {
+            'lightness': -70
+          }
+        },
+        {
+          'featureType': 'building',
+          'elementType': 'geometry.fill',
+          'stylers': {
+            'color': '#000000'
+          }
+        },
+        {
+          'featureType': 'all',
+          'elementType': 'labels.text.fill',
+          'stylers': {
+            'color': '#857f7f'
+          }
+        },
+        {
+          'featureType': 'all',
+          'elementType': 'labels.text.stroke',
+          'stylers': {
+            'color': '#000000'
+          }
+        },
+        {
+          'featureType': 'building',
+          'elementType': 'geometry',
+          'stylers': {
+            'color': '#022338'
+          }
+        },
+        {
+          'featureType': 'green',
+          'elementType': 'geometry',
+          'stylers': {
+            'color': '#062032'
+          }
+        },
+        {
+          'featureType': 'boundary',
+          'elementType': 'all',
+          'stylers': {
+            'color': '#465b6c'
+          }
+        },
+        {
+          'featureType': 'manmade',
+          'elementType': 'all',
+          'stylers': {
+            'color': '#022338'
+          }
+        },
+        {
+          'featureType': 'label',
+          'elementType': 'all',
+          'stylers': {
+            'visibility': 'off'
+          }
+        }
+      ]
     }
   },
   mutations: {

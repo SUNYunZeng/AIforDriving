@@ -11,7 +11,7 @@ router.post('/', (req, res) => {
     jsonWrite(res, undefined);
     return;
   }
-  params.requireRun = params.requireRun === undefined ? false : params.requireRun;
+  params.requireRes = params.requireRes === undefined ? false : params.requireRes;
 
   let user = table[params.tableName];
 
@@ -22,8 +22,10 @@ router.post('/', (req, res) => {
       }
     });
 
-    if (params.requireRun) {
-      work.listen(JSON.stringify(traj)).then(data => jsonWrite(res, data)).catch(err => console.log(err.toString('utf8')));
+    if (params.requireRes) {
+      work.listen(JSON.stringify(traj))
+        .then(data => jsonWrite(res, {'traj': traj, 'res': data}))
+        .catch(err => console.log(err.toString('utf8')));
     } else {
       jsonWrite(res, traj);
     }
