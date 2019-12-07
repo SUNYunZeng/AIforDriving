@@ -3,7 +3,7 @@
     <Form ref="formInline" :model="formInline" inline>
       <FormItem>
         轨迹 ID:
-        <InputNumber style="width:70px" :max="1000" :min="1" v-model="id"></InputNumber>
+        <InputNumber style="width:70px" :max="this.$isOnServer?2500:250" :min="1" v-model="id"></InputNumber>
       </FormItem>
       <FormItem>
         切分粒度:
@@ -51,10 +51,11 @@
     name: 'prediction',
     data () {
       return {
+        max_id : this.$isOnServer?2500:250,
         formInline: {},
         cut_size: 10,
         slider_max: 10,
-        id: 10,
+        id: 100,
         move_value: 1,
         is_dynamic: false,
         user: {
@@ -99,6 +100,11 @@
         }
       },
       handleSubmit () {
+        if(this.id<0 || this.id>this.max_id || this.id!==parseInt(this.id)){
+          this.$Message.info('id取值错误!');
+          this.id = 100;
+          return;
+        }
         this.slider_max = this.cut_size;
         this.getAjax().then((data) => {
           let traj = this.$isOnServer ? data.traj : [data.RECORDS[parseInt(this.id)]];
@@ -193,6 +199,9 @@
           };
           this.$Message.success('预测结果：' + data.res);
         }).catch((err) => this.$Message.error(err.toString()));
+      },
+      draw(option){
+        this.option = option;
       },
       predict () {
         if (this.user.trajectory==null || this.user.record==null) {
