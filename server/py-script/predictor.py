@@ -269,8 +269,10 @@ def padded_traj_data(trajset):
     for key in attr_key:
         trajset[key] = eval(trajset[key])
     for key in traj_key:
-        trajset[key] = eval(trajset[key])
-    trajset["sem_pt"] = eval(trajset["sem_pt"])
+        if isinstance(trajset[key], str):
+            trajset[key] = eval(trajset[key])
+    if isinstance(trajset["sem_pt"], str):
+        trajset["sem_pt"] = eval(trajset["sem_pt"])
 
     for key in attr_key:
         attr[key] = torch.Tensor([trajset[key]])

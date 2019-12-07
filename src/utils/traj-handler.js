@@ -1,26 +1,36 @@
 import store from '@/store';
 
-export function process (data) {
+export function process (data, cut_size) {
   // json转换
   let user = typeof data === 'string' ? JSON.parse(data)[0] : data[0];
   let trajectory = [];
   let norm_dict = eval(user.norm_dict);
   let [lngs, lats] = [eval(user.lngs), eval(user.lats)];
-  [user.lngs, user.lats] = [lngs, lats];
   let [min_lng, max_lat, max_lng, min_lat] = [Math.min(...lngs), Math.max(...lats), Math.max(...lngs), Math.min(...lats)];
-  let center = dec_loc(norm_dict, (max_lng + min_lng) / 2, (max_lat + min_lat) / 2);
+  let center = wgs84togcj02tobd09(...dec_loc(norm_dict, (max_lng + min_lng) / 2, (max_lat + min_lat) / 2));
   // 定位范围，左上角与右上角
-
-  let boundingbox = [dec_loc(norm_dict, min_lng, max_lat), dec_loc(norm_dict, max_lng, min_lat)];
+  let boundingbox = [wgs84togcj02tobd09(...dec_loc(norm_dict, min_lng, max_lat)),
+    wgs84togcj02tobd09(...dec_loc(norm_dict, max_lng, min_lat))];
   for (let i = 0; i < lngs.length; i++) {
     trajectory.push(wgs84togcj02tobd09(...dec_loc(norm_dict, lngs[i], lats[i])));
   }
+  const type_key = ['lngs', 'lats', 'travel_dis', 'spd', 'azimuth', 'key_point', 'sem_pt'];
+  let recordMap = new Map();
+  for (let i = 1; i <= cut_size; i++) {
+    // 深拷贝
+    let tmp = JSON.parse(JSON.stringify(user));
+    for (let key of type_key) {
+      let len = Math.max(2, parseInt(i / cut_size * trajectory.length - 1));
+      tmp[key] = eval(user[key]).slice(0, len);
+    }
+    recordMap.set(i, tmp);
+  }
   return {
-    record: user,
+    recordMap: recordMap,
     trajectory: trajectory,
     boundingbox: boundingbox,
     center: center,
-    destination: trajectory[trajectory.length-1]
+    real_dest: trajectory[trajectory.length - 1]
   };
 }
 

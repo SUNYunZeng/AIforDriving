@@ -1,34 +1,40 @@
 const table = require('../table');
 const express = require('express');
+const Sequelize = require('sequelize');
 const router = express.Router();
-const work = require('../py-script/worker');
+const Op = Sequelize.Op;
 import {jsonWrite} from '../func';
 
 router.post('/', (req, res) => {
   let params = req.body;
-  console.log(params);
+
   if (params.tableName === '' || params.id === '' || table[params.tableName] === undefined) {
     jsonWrite(res, undefined);
     return;
   }
-  params.requireRes = params.requireRes === undefined ? false : params.requireRes;
+  console.log(params.id);
+  let search_params;
+  if (typeof params.id !== 'number') {
+    search_params = {
+      id: {
+        [Op.or]: params.id
+      }
+    };
+  }else{
+    search_params = {
+      id: parseInt(params.id)
+    }
+  }
+
+  console.log(search_params);
 
   let user = table[params.tableName];
 
   (async () => {
     let traj = await user.findAll({
-      where: {
-        id: parseInt(params.id)
-      }
+      where: search_params
     });
-
-    if (params.requireRes) {
-      work.listen(JSON.stringify(traj))
-        .then(data => jsonWrite(res, {'traj': traj, 'res': data}))
-        .catch(err => console.log(err.toString('utf8')));
-    } else {
-      jsonWrite(res, traj);
-    }
+    jsonWrite(res, traj);
   })();
 });
 

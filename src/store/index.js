@@ -215,7 +215,7 @@ const store = new Vuex.Store({
           }
         }
       ]
-    }
+    },
   },
   mutations: {
     setMenus (state, items) {
