@@ -3,7 +3,7 @@
 
 # 项目预览
 
-![avatar](/static/img/pre.gif)
+![img](http://sunyunzeng.com/Vue-Express-MySQL%E9%A9%BE%E9%A9%B6%E8%A1%8C%E4%B8%BA%E5%88%86%E6%9E%90%E5%85%A8%E6%A0%88%E9%A1%B9%E7%9B%AE-%E4%B8%80-%E9%A1%B9%E7%9B%AE%E5%88%9D%E5%A7%8B%E5%8C%96/pre.gif) 
 
 ## Build Setup
 
