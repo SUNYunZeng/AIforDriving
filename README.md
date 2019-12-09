@@ -1,6 +1,9 @@
-# ai_driving
-
+# Geo_AI--Destination Prediction
 > A  project for driving dextination prediction
+
+# 项目预览
+
+![avatar](/static/img/pre.gif)
 
 ## Build Setup
 

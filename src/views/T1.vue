@@ -116,7 +116,7 @@
       changepage(index){//分页
         let _start = (index-1) * this.pageSize;
         let _end = index * this.pageSize;
-        this.pageData = this.data6.slice(_start,_end);
+        this.pageData = this.table_data.slice(_start,_end);
       },
       search () {
         if (this.checkAllGroup.length === 0) {
