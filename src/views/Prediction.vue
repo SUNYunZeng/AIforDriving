@@ -12,9 +12,9 @@
       <FormItem>
         测试用户: <Select v-model="user.name" clearable style="width:70px">
         <Option value="user1">User1</Option>
-        <Option value="user2" disabled>User2</Option>
-        <Option value="user3" disabled>User3</Option>
-        <Option value="user4" disabled>User4</Option>
+        <Option value="user2" :disabled="!this.$isOnServer">User2</Option>
+        <Option value="user3" :disabled="!this.$isOnServer">User3</Option>
+        <Option value="user4" :disabled="!this.$isOnServer">User4</Option>
       </Select>
       </FormItem>
       <FormItem style="width:70px">
@@ -212,8 +212,6 @@
       },
       draw (trajectory, real_dest, center, boundingbox, pre_dest) {
         this.lines.coords = trajectory;
-        this.bmap.center = center;
-        this.bmap.boundingCoords = boundingbox;
         this.lines_option.data = [this.lines];
         this.lines_state.data = [this.lines];
         this.real_dest_option.data = [{name: '目的地', value: this.user.real_dest}];
@@ -222,13 +220,18 @@
         if (this.$isOnServer) {
           series.push(this.pre_dest_option);
         }
-        this.option = {
-          bmap: this.bmap,
+        let option = {
           tooltip: {
             trigger: 'item'
           },
           series: series
         };
+        if(this.bmap.center.toString()!== center.toString()){
+          this.bmap.center = center;
+          this.bmap.boundingCoords = boundingbox;
+          option['bmap'] = this.bmap;
+        }
+        this.option = option;
       },
       predict () {
         if (this.user.trajectory == null || this.user.recordMap == null) {
@@ -255,7 +258,7 @@
               _this.do_predict();
             }
             flag = true;
-          }, 4000);
+          }, 3000);
         } else {
           this.do_predict();
         }
@@ -264,7 +267,8 @@
         let len = Math.max(2, parseInt(this.move_value / this.cut_size * this.user.trajectory.length - 1));
         if (this.$isOnServer) {
           post('predictor', {
-            record: this.user.recordMap.get(this.move_value)
+            record: this.user.recordMap.get(this.move_value),
+            user: this.user.name
           }).then((data) => {
             let pre_dest = wgs84togcj02tobd09(...eval(data.res));
             this.draw(this.user.trajectory.slice(0, len), this.user.real_dest,

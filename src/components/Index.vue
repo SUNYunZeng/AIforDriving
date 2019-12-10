@@ -117,7 +117,7 @@
       // 已经为ajax请求设置了loading 请求前自动调用 请求完成自动结束
       // 添加请求拦截器
       this.$axios.interceptors.request.use(config => {
-        this.showLoading = true;
+        this.showLoading = false;
         // 在发送请求之前做些什么
         return config;
       }, error => {
@@ -262,7 +262,7 @@
 
         if (!this.keepAliveData.includes(name)) {
           // 如果标签超过8个 则将第一个标签删除
-          if (this.tagsArry.length == 8) {
+          if (this.tagsArry.length === 8) {
             this.tagsArry.shift();
           }
           this.tagsArry.push({name, text: this.nameToTitle[name]});

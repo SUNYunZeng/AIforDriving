@@ -13,7 +13,7 @@ router.beforeEach(async (to, from, next)=>{
       const routers = menusToRouters(store.state.menuItems);
       router.addRoutes(routers);
       hasMenus = true;
-      next({path: to.path || '/'})
+      next({path: to.path || '/'});
     }catch (e) {
       console.log(e.toString());
     }

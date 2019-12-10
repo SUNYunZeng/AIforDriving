@@ -3,9 +3,9 @@ const config = require('./py-config');
 const python_path = config.python_path;
 const model_path = config.model_path;
 
-let listen = function (pre_traj) {
+let listen = function (pre_traj, user) {
 
-  const config = [python_path, pre_traj, model_path];
+  const config = [python_path, pre_traj, model_path+user+'.pth'];
   return new Promise(function (resolve, reject) {
     const workerProcess = child_process.spawn('python', config);
     workerProcess.stdout.on('data', function (data) {

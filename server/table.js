@@ -12,4 +12,3 @@ module.exports = {
   'user4': user4,
 };
 
-
