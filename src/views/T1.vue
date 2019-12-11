@@ -10,11 +10,7 @@
       </Select>
       </FormItem>
       <FormItem>
-        <b>检索内容:</b>
-      </FormItem>
-      <FormItem>
         <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
-          <Checkbox label="出发时间"></Checkbox>
           <Checkbox label="出发地点"></Checkbox>
           <Checkbox label="抵达地点"></Checkbox>
           <Checkbox label="平均行驶速度"></Checkbox>
@@ -27,11 +23,16 @@
           </Checkbox>
         </CheckboxGroup>
       </FormItem>
+      <FormItem><b>出发时间:</b></FormItem>
+      <FormItem>
+        <DatePicker v-model="time_range" :start-date="new Date('2018-01-01 00:00:00')" type="datetimerange"
+                    placeholder="Select date" style="width: 300px"></DatePicker>
+      </FormItem>
       <FormItem><b>ID范围:</b></FormItem>
       <FormItem>
-        <InputNumber style="width: 55px" :max="max_set" :min="1" v-model="min_v" @on-change="changv1"></InputNumber>
+        <InputNumber style="width: 70px" :max="max_set" :min="1" v-model="min_v" @on-change="changv1"></InputNumber>
         ~
-        <InputNumber style="width: 55px" :max="max_set" :min="1" v-model="max_v" @on-change="changv2"></InputNumber>
+        <InputNumber style="width: 70px" :max="max_set" :min="1" v-model="max_v" @on-change="changv2"></InputNumber>
       </FormItem>
       <FormItem>
         <Button @click="search" type="primary" shape="circle" icon="ios-search">Search</Button>
@@ -53,7 +54,7 @@
       return {
         id: [],
         user: [],
-        table_data: [],
+        time_range: ['2018-01-01 00:00:00', '2018-12-31 00:00:00'],
         table_name: 'user1',
         pageSize: 10,//每页显示多少条
         dataCount: 0,//总条数
@@ -63,19 +64,13 @@
         max_set: this.$isOnServer? 2000: 200,
         indeterminate: true,
         checkAll: false,
-        checkAllGroup: ['出发时间', '出发地点', '抵达地点', '平均行驶速度', '轨迹总点数', '行驶总距离'],
+        checkAllGroup: ['出发地点', '抵达地点', '平均行驶速度', '轨迹总点数', '行驶总距离'],
         placeDict: {0: '餐饮', 1: '医疗', 2: '小区', 3: '酒店', 4: '生活服务', 5: '景点', 6: '教育', 7: '公司'},
         checktochar: {
           '出发时间': 'dep_time', '出发地点': 'dep_origin', '抵达地点': 'dest',
           '平均行驶速度': 'vel', '轨迹总点数': 'num', '行驶总距离': 'dis'
         },
         columns: {
-          '出发时间': {
-            title: 'Departure Time',
-            key: 'dep_time',
-            sortable: true,
-            width: 200,
-          },
           '出发地点': {
             title: 'Origin',
             key: 'dep_origin',
@@ -120,26 +115,33 @@
         }
         this.id = [];
         for (let i = this.min_v; i <= this.max_v; i++) {
-          this.table_data = [1, 2, 3, 4, 5, 6, 4, 7, 8, 9, 10, 11, 12];
           this.id.push(i);
         }
         if (this.$isOnServer) {
           post('searchByCol', {
             id: this.id,
+            time: this.time_range,
             tableName: this.table_name
           }).then(data => {
             if (data.length > 0) {
               this.tableFactory(data);
+            }else {
+              this.$Message.info('无数据');
             }
           });
         } else {
           get('../static/data/user_1.json').then(data => {
             this.user = [];
             for (let i of this.id) {
-              this.user.push(data.RECORDS[i]);
+              let tmp_date = new Date(data.RECORDS[i]['time']);
+              if(tmp_date>=this.time_range[0] && tmp_date<= this.time_range[1]){
+                this.user.push(data.RECORDS[i]);
+              }
             }
             if (this.user.length > 0) {
               this.tableFactory(this.user);
+            }else {
+              this.$Message.info('无数据');
             }
           });
         }
@@ -151,6 +153,11 @@
           key: 'id',
           sortable: true,
           width: 65,
+        },{
+          title: 'Departure Time',
+            key: 'dep_time',
+            sortable: true,
+            width: 200,
         }];
         for (let key of this.checkAllGroup) {
           this.columns1.push(this.columns[key]);
@@ -167,7 +174,7 @@
         }
       },
       generateRowContent (id, item) {
-        let res = {id: id};
+        let res = {id: id, dep_time: item['time']};
         for (let key of this.checkAllGroup) {
           this.calContent(res, key, item);
         }
@@ -175,9 +182,6 @@
       },
       calContent (res, key, item) {
         switch (key) {
-          case '出发时间':
-            res[this.checktochar[key]] = item['time'];
-            break;
           case '出发地点':
             let semO = eval(item['sem_O']);
             res[this.checktochar[key]] = this.placeDict[semO.indexOf(Math.max(...semO))];
@@ -233,7 +237,7 @@
         this.indeterminate = false;
 
         if (this.checkAll) {
-          this.checkAllGroup = ['出发时间', '出发地点', '抵达地点', '平均行驶速度', '轨迹总点数', '行驶总距离'];
+          this.checkAllGroup = ['出发地点', '抵达地点', '平均行驶速度', '轨迹总点数', '行驶总距离'];
         } else {
           this.checkAllGroup = [];
         }

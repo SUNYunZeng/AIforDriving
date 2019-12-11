@@ -12,7 +12,6 @@ router.post('/', (req, res) => {
     jsonWrite(res, undefined);
     return;
   }
-  console.log(params.id);
   let search_params;
   if (typeof params.id !== 'number') {
     search_params = {
@@ -25,9 +24,8 @@ router.post('/', (req, res) => {
       id: parseInt(params.id)
     }
   }
-
-  console.log(search_params);
-
+  search_params['time'] = params.time===undefined?{[Op.lt]: new Date()}:
+    {[Op.lt]: new Date(params.time[1]),[Op.gt]:new Date(params.time[0])};
   let user = table[params.tableName];
 
   (async () => {

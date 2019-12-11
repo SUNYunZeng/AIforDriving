@@ -1,96 +1,140 @@
 <template>
   <div>
-    <div id="tChart" ref="tChart"></div>
+    <Form ref="formInline" inline>
+      <FormItem>
+        测试用户: <Select v-model="user" clearable style="width:70px">
+        <Option value="user1">User1</Option>
+        <Option value="user2" :disabled="!this.$isOnServer">User2</Option>
+        <Option value="user3" :disabled="!this.$isOnServer">User3</Option>
+        <Option value="user4" :disabled="!this.$isOnServer">User4</Option>
+      </Select>
+      </FormItem>
+      <FormItem><b>出发时间:</b></FormItem>
+      <FormItem>
+        <DatePicker v-model="time_range" :start-date="new Date('2018-01-01 00:00:00')" type="datetimerange"
+                    style="width: 300px"></DatePicker>
+      </FormItem>
+      <FormItem>
+        <Button type="primary" @click="show">展示</Button>
+      </FormItem>
+    </Form>
+    <EChartsMap :option="option"></EChartsMap>
   </div>
 </template>
 
 <script>
-  let echarts = require('echarts');
+  import EChartsMap from '@/components/commom/EChartsMap';
+  import {lines_factory} from '@/utils/traj-handler';
+  import {post, get} from '@/utils/myAjax';
   import store from '@/store';
+
   export default {
     name: 'trajectory',
     data () {
-      return {};
-    },
-    mounted () {
-      // 调用绘制图表的方法
-      this.draw();
+      return {
+        user: 'user1',
+        time_range: ['2018-01-01 00:00:00', '2018-01-31:00:00:00'],
+        bmap: {
+          center: store.state.mapconfig.center,
+          boundingCoords: [],
+          zoom: 12,
+          roam: true,
+          mapStyle: store.state.mapStyle
+        },
+        myChart: null,
+        option: {
+          bmap: this.bmap,
+          tooltip: {
+            trigger: 'item'
+          },
+          series: []
+        },
+        lines_option: {
+          type: 'lines',
+          coordinateSystem: 'bmap',
+          polyline: true,
+          data: [],
+          silent: true,
+          lineStyle: {
+            normal: {
+              opacity: 0.6,
+              width: 1
+            }
+          },
+          progressiveThreshold: 500,
+          progressive: 200
+        },
+        lines_state: {
+          type: 'lines',
+          coordinateSystem: 'bmap',
+          polyline: true,
+          data: [],
+          lineStyle: {
+            normal: {
+              width: 0
+            }
+          },
+          effect: {
+            constantSpeed: 20,
+            show: true,
+            trailLength: 0.1,
+            symbolSize: 1.5
+          },
+          zlevel: 1
+        },
+      };
     },
     methods: {
-      draw () {
-        // 实例化echarts对象
-        let myChart = echarts.init(this.$refs.tChart);
-        this.$axios.get('../static/data/demo.json')
-          .then((data) => {
-            var hStep = 300 / (data.length - 1);
-            let busLines = [].concat.apply([], data.map(function (busLine, idx) {
-              var prevPt;
-              var points = [];
-              for (var i = 0; i < busLine.length; i += 2) {
-                var pt = [busLine[i], busLine[i + 1]];
-                if (i > 0) {
-                  pt = [
-                    prevPt[0] + pt[0],
-                    prevPt[1] + pt[1]
-                  ];
-                }
-                prevPt = pt;
-
-                points.push([pt[0] / 1e4, pt[1] / 1e4]);
-              }
-              return {
-                coords: points,
-                lineStyle: {
-                  normal: {
-                    color: echarts.color.modifyHSL('#5A94DF', Math.round(hStep * idx))
-                  }
-                }
-              };
-            }));
-            myChart.setOption({
-              bmap: {
-                center: [116.46, 39.92],
-                zoom: 10,
-                roam: true,
-                mapStyle: store.state.mapStyle
-              },
-              series: [{
-                type: 'lines',
-                coordinateSystem: 'bmap',
-                polyline: true,
-                data: busLines,
-                silent: true,
-                lineStyle: {
-                  normal: {
-                    // color: '#c23531',
-                    // color: 'rgb(200, 35, 45)',
-                    opacity: 0.2,
-                    width: 1
-                  }
-                },
-                progressiveThreshold: 500,
-                progressive: 200
-              }, {
-                type: 'lines',
-                coordinateSystem: 'bmap',
-                polyline: true,
-                data: busLines,
-                lineStyle: {
-                  normal: {
-                    width: 0
-                  }
-                },
-                effect: {
-                  constantSpeed: 20,
-                  show: true,
-                  trailLength: 0.1,
-                  symbolSize: 1.5
-                },
-                zlevel: 1
-              }]
-            });
+      show () {
+        if (this.$isOnServer) {
+          post('searchByRow', {
+            rowName: ['lngs', 'lats', 'line_id', 'norm_dict'],
+            time: this.time_range,
+            tableName: this.user
+          }).then(data => {
+            if (data.length > 0) {
+              let lines = lines_factory(data);
+              this.draw(lines);
+            } else {
+              this.$Message.info('空数据');
+            }
           });
+        } else {
+          get('../static/data/user_1.json').then(data => {
+            if (data.RECORDS.length > 0) {
+              let basket = [];
+              let record = data.RECORDS;
+              for (let item of record) {
+                let tmp_date = new Date(item['time']);
+                if(tmp_date>=this.time_range[0] && tmp_date<= this.time_range[1]){
+                  basket.push(item);
+                }
+              }
+              this.draw(lines_factory(basket));
+            } else {
+              this.$Message.info('空数据');
+            }
+          });
+        }
       },
+      draw (lines) {
+        this.lines_option.data = lines.data;
+        this.lines_state.data = lines.data;
+        this.bmap.center = lines.center;
+        this.option = {
+          bmap: this.bmap,
+          tooltip: {
+            trigger: 'item'
+          },
+          series: [this.lines_option, this.lines_state]
+        };
+      }
+    },
+    mounted () {
+
+    },
+    components: {
+      EChartsMap
     }
   };
 </script>

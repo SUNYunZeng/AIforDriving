@@ -1,5 +1,7 @@
 import store from '@/store';
 
+let echarts = require('echarts');
+
 export function process (data, cut_size) {
   // json转换
   let user = typeof data === 'string' ? JSON.parse(data)[0] : data[0];
@@ -33,6 +35,81 @@ export function process (data, cut_size) {
     real_dest: trajectory[trajectory.length - 1]
   };
 }
+
+export function lines_factory (data) {
+  let max_step = 0;
+  const norm_dict = eval(data[0]['norm_dict']);
+  for (let item of data) {
+    max_step = Math.max(max_step, item['line_id']);
+  }
+  const hStep = 50 / max_step;
+  let res = [];
+  let [min_lng, max_lat, max_lng, min_lat] = [0, 0, 0, 0];
+  let center;
+  for (let item of data) {
+    let points = [];
+    let [lngs, lats] = [eval(item['lngs']), eval(item['lats'])];
+    for (let i = 0; i < lngs.length; i++) {
+      [min_lng, max_lat, max_lng, min_lat] = [Math.min(min_lng, lngs[i]), Math.max(max_lat, lats[i]),
+        Math.max(max_lng, lngs[i]), Math.min(min_lat, lats[i])];
+      points.push(wgs84togcj02tobd09(...dec_loc(norm_dict, lngs[i], lats[i])));
+    }
+    res.push({
+      coords: points,
+      lineStyle: {
+        normal: {
+          color: echarts.color.modifyHSL('#5A94DF', Math.round(hStep * item['line_id']))
+        }
+      }
+    });
+  }
+  center = wgs84togcj02tobd09(...dec_loc(norm_dict, (max_lng + min_lng) / 2, (max_lat + min_lat) / 2));
+  return {data: res, center: center};
+}
+
+export function points_factory (data, set) {
+  let points = [];
+  let max_eff = 0;
+  let center;
+  let max_lng, min_lng, max_lat, min_lat;
+  if (set.length === 2) {
+    let res1 = data_push(data, 'origin', points);
+    let res2 = data_push(data, 'destination', points);
+    max_eff = Math.max(res1[0], res2[0]);
+    [max_lng, min_lng, max_lat, min_lat] = [Math.max(res1[1], res2[1]), Math.min(res1[2], res2[2]),
+      Math.max(res1[3], res2[3]), Math.min(res1[4], res2[4])];
+
+  } else {
+    let res = data_push(data, set[0], points);
+    max_eff = res[0];
+    [max_lng, min_lng, max_lat, min_lat] = [res[1], res[2], res[3], res[4]];
+  }
+  center = [(max_lat + min_lat) / 2, (max_lng + min_lng) / 2];
+  return {
+    data: {
+      max: max_eff,
+      data: points
+    },
+    center: center
+  };
+}
+
+let data_push = (data, key, res) => {
+  let eff = key === 'origin' ? 'o_eff' : 'd_eff';
+  const norm_dict = eval(data[0]['norm_dict']);
+  let [max_eff, max_lng, min_lng, max_lat, min_lat] = [-10, 0, 1000, 0, 1000];
+  for (let item of data) {
+    let _pt = key === 'origin' ? eval(item[key]) : dec_loc(norm_dict, eval(item[key])[0], eval(item[key])[1]);
+    let pt = wgs84togcj02tobd09(..._pt);
+    max_eff = Math.max(max_eff, item[eff]);
+    [max_lng, min_lng, max_lat, min_lat] = [Math.max(max_lng, pt[0]), Math.min(min_lng, pt[0]),
+      Math.max(max_lat, pt[1]), Math.min(min_lat, pt[1])];
+    res.push({
+      lat: pt[1], lng: pt[0], eff: item[eff]
+    });
+  }
+  return [max_eff, max_lng, min_lng, max_lat, min_lat];
+};
 
 let dec_loc = (norm_dict, lng, lat) =>
   [lng * norm_dict[1] + norm_dict[0], lat * norm_dict[3] + norm_dict[2]];

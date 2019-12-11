@@ -13,6 +13,7 @@ module.exports = db.defineModel('user_1',{
   sem_O: Sequelize.TEXT,
   sem_D: Sequelize.TEXT,
   destination: Sequelize.TEXT,
+  origin: Sequelize.TEXT,
   lngs: Sequelize.TEXT,
   lats: Sequelize.TEXT,
   travel_dis: Sequelize.TEXT,
@@ -21,5 +22,8 @@ module.exports = db.defineModel('user_1',{
   norm_dict: Sequelize.TEXT,
   key_point: Sequelize.TEXT,
   sem_pt: Sequelize.TEXT,
-  time: Sequelize.TEXT
+  time: Sequelize.DATE,
+  line_id: Sequelize.INTEGER,
+  o_eff: Sequelize.INTEGER,
+  d_eff: Sequelize.INTEGER,
 });
