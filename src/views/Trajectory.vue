@@ -14,8 +14,12 @@
         <DatePicker v-model="time_range" :start-date="new Date('2018-01-01 00:00:00')" type="datetimerange"
                     style="width: 300px"></DatePicker>
       </FormItem>
+      <FormItem style="width:110px">
+        时序观察:
+        <i-switch v-model="is_dynamic" @on-change="change"/>
+      </FormItem>
       <FormItem>
-        <Button type="primary" @click="show">展示</Button>
+        <Button type="primary" :disabled="preable" @click="show">展示</Button>
       </FormItem>
     </Form>
     <EChartsMap :option="option"></EChartsMap>
@@ -34,6 +38,9 @@
       return {
         user: 'user1',
         time_range: ['2018-01-01 00:00:00', '2018-01-31:00:00:00'],
+        is_dynamic: false,
+        preable: false,
+        dy: null,
         bmap: {
           center: store.state.mapconfig.center,
           boundingCoords: [],
@@ -94,7 +101,12 @@
           }).then(data => {
             if (data.length > 0) {
               let lines = lines_factory(data);
-              this.draw(lines);
+              let idx = 0;
+              if (this.is_dynamic) {
+                this.dy_move(idx, lines);
+              } else {
+                this.draw(lines);
+              }
             } else {
               this.$Message.info('空数据');
             }
@@ -106,29 +118,54 @@
               let record = data.RECORDS;
               for (let item of record) {
                 let tmp_date = new Date(item['time']);
-                if(tmp_date>=this.time_range[0] && tmp_date<= this.time_range[1]){
+                if (tmp_date >= this.time_range[0] && tmp_date <= this.time_range[1]) {
                   basket.push(item);
                 }
               }
-              this.draw(lines_factory(basket));
+              let idx = 0;
+              if (this.is_dynamic) {
+                this.dy_move(idx, lines_factory(basket));
+              } else {
+                this.draw(lines_factory(basket));
+              }
             } else {
               this.$Message.info('空数据');
             }
           });
         }
       },
+      dy_move (idx, lines) {
+        if (idx > lines.length - 1) {
+          idx = 0;
+        }
+        this.preable = true;
+        let _this = this;
+        this.dy = setInterval(function () {
+          _this.draw({data: [lines.data[idx]], center: lines.center});
+          idx += 1;
+        }, 1500);
+      },
       draw (lines) {
         this.lines_option.data = lines.data;
         this.lines_state.data = lines.data;
-        this.bmap.center = lines.center;
-        this.option = {
-          bmap: this.bmap,
+        let option = {
           tooltip: {
             trigger: 'item'
           },
           series: [this.lines_option, this.lines_state]
         };
-      }
+        if (this.bmap.center.toString() !== lines.center.toString()) {
+          this.bmap.center = lines.center;
+          option['bmap'] = this.bmap;
+        }
+        this.option = option;
+      },
+      change () {
+        if (!this.is_dynamic && this.dy != null) {
+          clearInterval(this.dy);
+          this.preable = false;
+        }
+      },
     },
     mounted () {
 
