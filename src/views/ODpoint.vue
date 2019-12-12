@@ -4,9 +4,9 @@
       <FormItem>
         测试用户: <Select v-model="user" clearable style="width:70px">
         <Option value="user1">User1</Option>
-        <Option value="user2" :disabled="!this.$isOnServer">User2</Option>
-        <Option value="user3" :disabled="!this.$isOnServer">User3</Option>
-        <Option value="user4" :disabled="!this.$isOnServer">User4</Option>
+        <Option value="user2">User2</Option>
+        <Option value="user3">User3</Option>
+        <Option value="user4">User4</Option>
       </Select>
       </FormItem>
       <FormItem><b>出发时间:</b></FormItem>
@@ -80,7 +80,7 @@
             }
           });
         } else {
-          get('../static/data/user_1.json').then(data => {
+          get('../static/data/' + this.user + '.json').then(data => {
             if (data.RECORDS.length > 0) {
               let basket = [];
               let record = data.RECORDS;

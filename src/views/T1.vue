@@ -4,9 +4,9 @@
       <FormItem>
         用户: <Select v-model="table_name" clearable style="width:70px">
         <Option value="user1">User1</Option>
-        <Option value="user2" :disabled="!this.$isOnServer">User2</Option>
-        <Option value="user3" :disabled="!this.$isOnServer">User3</Option>
-        <Option value="user4" :disabled="!this.$isOnServer">User4</Option>
+        <Option value="user2">User2</Option>
+        <Option value="user3">User3</Option>
+        <Option value="user4">User4</Option>
       </Select>
       </FormItem>
       <FormItem>
@@ -130,7 +130,7 @@
             }
           });
         } else {
-          get('../static/data/user_1.json').then(data => {
+          get('../static/data/'+this.table_name+'.json').then(data => {
             this.user = [];
             for (let i of this.id) {
               let tmp_date = new Date(data.RECORDS[i]['time']);

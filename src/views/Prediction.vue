@@ -12,9 +12,9 @@
       <FormItem>
         测试用户: <Select v-model="user.name" clearable style="width:70px">
         <Option value="user1">User1</Option>
-        <Option value="user2" :disabled="!this.$isOnServer">User2</Option>
-        <Option value="user3" :disabled="!this.$isOnServer">User3</Option>
-        <Option value="user4" :disabled="!this.$isOnServer">User4</Option>
+        <Option value="user2">User2</Option>
+        <Option value="user3">User3</Option>
+        <Option value="user4">User4</Option>
       </Select>
       </FormItem>
       <FormItem style="width:70px">
@@ -188,7 +188,7 @@
             tableName: this.user.name
           });
         } else {
-          return get('../static/data/user_1.json');
+          return get('../static/data/'+this.user.name+'.json');
         }
       },
       handleSubmit () {
