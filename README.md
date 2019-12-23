@@ -8,15 +8,17 @@
 
 2. 基于[Node.js](http://nodejs.cn/)的[Express](http://www.expressjs.com.cn/)后端框架
 
-3. 基于[MySQL]关系型数据库
+3. 基于[MySQL](https://www.mysql.com/)关系型数据库
 
 4. 动态菜单栏配置
 
-5. 基于[ECharts](https://www.echartsjs.com/zh/index.html)动态轨迹可视化
+5. 实现深度学习模型（RNN为例）接口调用与在线步骤
 
-6. 基于[Leftlet](https://leafletjs.com/)的图层切换、热力图可视化
+6. 基于[ECharts](https://www.echartsjs.com/zh/index.html)动态轨迹可视化
 
-7. 数据库查询及图表展示
+7. 基于[Leftlet](https://leafletjs.com/)的图层切换、热力图可视化
+
+8. 数据库查询及图表展示
 
 # 项目预览
 
