@@ -5,6 +5,8 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
+    // 数据数量设置
+    traj_max_num: this.$isOnServer? 2000: 50,
     // 服务器地址
     bUrl: 'http://localhost:3000/api/',
     magicNum: {

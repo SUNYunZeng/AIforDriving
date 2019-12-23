@@ -61,7 +61,7 @@
         pageCurrent: 1,//当前页
         min_v: 1,
         max_v: 20,
-        max_set: this.$isOnServer? 2000: 200,
+        max_set: this.$store.state.traj_max_num,
         indeterminate: true,
         checkAll: false,
         checkAllGroup: ['出发地点', '抵达地点', '平均行驶速度', '轨迹总点数', '行驶总距离'],
@@ -217,13 +217,13 @@
         this.pageSize = index;
       },
       changv1 () {
-        if (this.min_v >= this.max_v || this.min_v <= 0 || this.min_v > this.max_set) {
+        if (this.min_v > this.max_v || this.min_v <= 0 || this.min_v > this.max_set) {
           this.$Message.error('数值需要在1~'+this.max_set+'之间');
           this.min_v = 1;
         }
       },
       changv2 () {
-        if (this.min_v >= this.max_v || this.max_v <= 0 || this.max_v > this.max_set) {
+        if (this.min_v > this.max_v || this.max_v <= 0 || this.max_v > this.max_set) {
           this.$Message.error('数值需要在1~'+this.max_set+'之间');
           this.max_v = this.max_set-1;
         }

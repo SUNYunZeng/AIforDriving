@@ -33,7 +33,6 @@
   import HeatmapOverlay from 'heatmap.js/plugins/leaflet-heatmap';
   import {post, get} from '@/utils/myAjax';
   import {points_factory} from  '@/utils/traj-handler'
-
   export default {
     name: 'od',
     data () {

@@ -3,7 +3,7 @@
     <Form ref="formInline" :model="formInline" inline>
       <FormItem>
         轨迹 ID:
-        <InputNumber style="width:70px" :max="this.$isOnServer?2500:250" :min="1" v-model="id"></InputNumber>
+        <InputNumber style="width:70px" :max="max_id" :min="1" v-model="id" @on-change="idChange"></InputNumber>
       </FormItem>
       <FormItem>
         切分粒度:
@@ -51,11 +51,11 @@
     name: 'prediction',
     data () {
       return {
-        max_id: this.$isOnServer ? 2500 : 250,
+        max_id: this.$store.state.traj_max_num,
         formInline: {},
         cut_size: 10,
         slider_max: 10,
-        id: 100,
+        id: 30,
         move_value: 1,
         is_dynamic: false,
         preable: false,
@@ -70,7 +70,7 @@
           boundingCoords: []
         },
         bmap: {
-          center: store.state.mapconfig.center,
+          center: this.$store.state.mapconfig.center,
           boundingCoords: [],
           zoom: 15,
           roam: true,
@@ -193,8 +193,8 @@
       },
       handleSubmit () {
         if (this.id < 0 || this.id > this.max_id || this.id !== parseInt(this.id)) {
-          this.$Message.info('id取值错误!');
-          this.id = 100;
+          this.$Message.error('ID需要在1~'+this.max_id+'之间');
+          this.id = 30;
           return;
         }
         this.slider_max = this.cut_size;
@@ -282,6 +282,12 @@
       },
       format (val) {
         return (val / this.slider_max * 100).toFixed(1) + '%';
+      },
+      idChange () {
+        if (this.id > this.max_id || this.min_v <= 0 || this.id !== parseInt(this.id)) {
+          this.$Message.error('ID需要在1~'+this.max_id+'之间');
+          this.id = 30;
+        }
       }
     },
     components: {
