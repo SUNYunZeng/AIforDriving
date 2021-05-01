@@ -27,7 +27,7 @@ Vue.prototype.bUrl = store.state.bUrl;
 axios.defaults.timeout = 10000;
 
 // 是否是部署环境
-Vue.prototype.$isOnServer = true;
+Vue.prototype.$isOnServer = false;
 
 /* eslint-disable no-new */
 new Vue({
