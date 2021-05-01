@@ -83,9 +83,9 @@ const store = new Vuex.Store({
       'geo_n_w': 'Geoq.Normal.Warm',
       'geo_n_h': 'Geoq.Normal.Hydro',
       'osm': 'OSM.Normal.Map',
-      'box_d': 'mapbox.dark',
-      'box_l': 'mapbox.light',
-      'box': 'mapbox.streets'
+      'box_d': 'mapbox/dark-v10',
+      'box_l': 'mapbox/light-v10',
+      'box': 'mapbox/streets-v10'
     },
     //地图配置
     mapconfig: {
